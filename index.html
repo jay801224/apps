@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>我的 App 作品集</title>
+<meta name="description" content="我用 AI 打造的跨平台 App — iOS、Android、Windows 與 macOS" />
+<style>
+  :root {
+    /* ── 設計 token — 顏色 ──
+       走「暖墨工作室」調性：深墨綠近黑的背景 + 銅金色重點色，
+       刻意避開 AI 常見的藍紫漸層。重點色可在每張卡片個別覆寫（--app）。 */
+    --bg:        #0c0f0e;   /* 深墨綠近黑 */
+    --bg-soft:   #121614;   /* 凹陷層 */
+    --card:      #161b19;   /* 卡片面 */
+    --card-2:    #1b211e;   /* 卡片高光面（漸層上緣） */
+    --card-line: #283330;   /* 一般描邊 */
+    --hairline:  rgba(255,255,255,.04); /* 內側髮絲高光 */
+    --text:      #f4f1ea;   /* 暖白，非純白 */
+    --muted:     #a7a99e;   /* 暖灰 */
+    --faint:     #6f7269;   /* 更弱的暖灰 */
+    --accent:    #d9a441;   /* 銅金 — 全站重點色 */
+    --accent-ink:#3a2c10;   /* 重點色的深底（icon 漸層下緣） */
+    --on-app:    #1a1306;   /* 疊在重點色上的深色文字（icon 字母） */
+    --accent-soft: rgba(217,164,65,.14);
+    --app:       var(--accent); /* 每張卡片可覆寫的個別重點色 */
+    /* ── hover / 互動色票 ── */
+    --line-hot:  #4a5a52;   /* hover 描邊 */
+    --btn-hot:   #1d2522;   /* 按鈕 hover 底 */
+    /* ── 設計 token — 間距尺度 (8pt) ── */
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px;
+    --r-card: 16px; --r-icon: 22px; --r-btn: 10px;
+    /* ── 動態：收尾減速的物理感 easing ── */
+    --ease-spring: cubic-bezier(.22, 1, .36, 1);
+    /* ── 字體：本文用系統 UI 堆疊；標題/標籤用等寬堆疊當作「獨立開發者」簽名感 ── */
+    --font-ui:   -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", "Cascadia Code", Menlo, Consolas, "PingFang TC", "Microsoft JhengHei", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-ui);
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(217,164,65,.06), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 var(--s-5); }
+
+  /* ---------- Hero ---------- */
+  header {
+    text-align: center;
+    padding: var(--s-8) var(--s-5) var(--s-7);
+  }
+  .eyebrow {
+    display: inline-block; font-family: var(--font-mono);
+    font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: var(--s-5);
+    padding: var(--s-1) var(--s-3); border: 1px solid var(--accent-soft); border-radius: 6px;
+    background: var(--accent-soft);
+  }
+  header h1 {
+    font-size: clamp(2.1rem, 5.5vw, 3.1rem); font-weight: 800;
+    letter-spacing: -0.03em; line-height: 1.1; color: var(--text);
+    text-shadow: 0 0 40px rgba(217,164,65,.12);
+  }
+  header p {
+    color: var(--muted); font-size: clamp(1rem, 2.5vw, 1.16rem);
+    margin-top: var(--s-4); max-width: 36ch; margin-left: auto; margin-right: auto;
+  }
+
+  /* ---------- App list ---------- */
+  .apps { display: flex; flex-direction: column; gap: var(--s-5); padding-bottom: var(--s-8); }
+
+  .card {
+    display: flex; gap: var(--s-5);
+    background: linear-gradient(180deg, var(--card-2), var(--card));
+    border: 1px solid var(--card-line);
+    border-radius: var(--r-card);
+    padding: var(--s-5);
+    position: relative;
+    overflow: hidden;
+    /* 內側髮絲高光 + 落下陰影，做出實體層次而非平面玻璃感 */
+    box-shadow: inset 0 1px 0 0 var(--hairline), 0 1px 2px rgba(0,0,0,.4);
+    transition: transform .35s var(--ease-spring), border-color .35s var(--ease-spring), box-shadow .35s var(--ease-spring);
+  }
+  /* 左側點亮的重點色邊條（hover 時長出來） */
+  .card::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--app); transform: scaleY(0); transform-origin: top;
+    transition: transform .35s var(--ease-spring);
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: var(--line-hot);
+    box-shadow: inset 0 1px 0 0 var(--hairline), 0 18px 40px -16px rgba(0,0,0,.7);
+  }
+  .card:hover::before { transform: scaleY(1); }
+
+  /* 左側：App ICON — 每張卡片以 --app 個別上色，取代全站藍紫漸層 */
+  .icon {
+    width: 92px; height: 92px; flex-shrink: 0;
+    border-radius: var(--r-icon);
+    background:
+      linear-gradient(155deg,
+        color-mix(in srgb, var(--app) 90%, white 10%),
+        color-mix(in srgb, var(--app) 55%, var(--accent-ink) 45%));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; font-weight: 800; color: var(--on-app);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.35),
+      0 10px 24px -10px color-mix(in srgb, var(--app) 60%, transparent);
+    overflow: hidden;
+    transition: transform .35s var(--ease-spring);
+  }
+  .card:hover .icon { transform: translateY(-2px) rotate(-1.5deg); }
+  .icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* 右側：資訊 — 強化 名稱 / 標語 / 介紹 三層階級 */
+  .info { flex: 1; min-width: 0; }
+  .info h2 { font-size: 1.42rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+  .info .tagline {
+    font-family: var(--font-mono);
+    color: var(--app); font-size: .76rem; font-weight: 500;
+    letter-spacing: .06em; margin-top: var(--s-2); text-transform: uppercase;
+  }
+  .info .desc { color: var(--muted); font-size: .96rem; margin: var(--s-3) 0 var(--s-4); max-width: 52ch; }
+
+  /* ---------- Store buttons ---------- */
+  .stores { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .store {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    padding: 7px 12px; border-radius: var(--r-btn);
+    border: 1px solid var(--card-line); background: var(--bg-soft);
+    color: var(--text); text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: border-color .25s var(--ease-spring), background .25s var(--ease-spring), transform .18s var(--ease-spring);
+  }
+  /* 滑過時的斜向光澤掃過 */
+  .store::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(120deg, transparent 35%, rgba(255,255,255,.07) 50%, transparent 65%);
+    transform: translateX(-120%); transition: transform .55s var(--ease-spring);
+  }
+  .store:hover { border-color: color-mix(in srgb, var(--app) 60%, var(--card-line)); background: var(--btn-hot); }
+  .store:hover::after { transform: translateX(120%); }
+  .store:active { transform: scale(.96); }
+  .store svg { width: 19px; height: 19px; flex-shrink: 0; }
+  .store .s-name { display: flex; flex-direction: column; line-height: 1.15; }
+  .store .s-sub { color: var(--faint); font-weight: 400; font-size: .66rem; letter-spacing: .02em; }
+  .store .s-main { font-size: .85rem; font-weight: 600; }
+
+  footer {
+    text-align: center; color: var(--faint); font-size: .85rem;
+    font-family: var(--font-mono); letter-spacing: .02em;
+    padding: var(--s-7) var(--s-5) var(--s-8);
+    border-top: 1px solid var(--card-line);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ---------- 手機版：ICON 移到上方置中 ---------- */
+  @media (max-width: 540px) {
+    .card { flex-direction: column; align-items: center; text-align: center; }
+    .info .desc { text-align: left; margin-left: auto; margin-right: auto; }
+    .stores { justify-content: center; }
+    .icon { width: 80px; height: 80px; font-size: 32px; }
+  }
+
+  /* ---------- 尊重「減少動態」系統偏好：關閉位移/旋轉/光澤 ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    .card:hover { transform: none; }
+    .card:hover .icon { transform: none; }
+    .card::before { transform: scaleY(1); }
+    .store::after { display: none; }
+    .store:active { transform: none; }
+  }
+
+  /* ---------- 區塊標題 ---------- */
+  .section { padding-top: var(--s-8); }
+  .section-head { margin-bottom: var(--s-5); }
+  .section-head .kicker {
+    font-family: var(--font-mono); font-size: .72rem; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+  }
+  .section-head h2 { font-size: clamp(1.4rem,3vw,1.7rem); font-weight: 800; letter-spacing: -0.02em; margin-top: var(--s-2); }
+  .section-head p { color: var(--muted); margin-top: var(--s-2); font-size: .95rem; max-width: 60ch; }
+
+  /* ---------- 數據統計 ---------- */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: var(--s-3); }
+  .stat {
+    background: linear-gradient(180deg, var(--card-2), var(--card));
+    border: 1px solid var(--card-line); border-radius: var(--r-card);
+    padding: var(--s-5) var(--s-4); box-shadow: inset 0 1px 0 0 var(--hairline);
+  }
+  .stat .num { font-family: var(--font-mono); font-size: 1.9rem; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; line-height: 1.1; }
+  .stat .lbl { color: var(--muted); font-size: .82rem; margin-top: var(--s-2); }
+  .tags { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+  .tag { font-size: .78rem; color: var(--muted); border: 1px solid var(--card-line); border-radius: 999px; padding: 3px 11px; background: var(--bg-soft); }
+  .note { color: var(--faint); font-size: .85rem; margin-top: var(--s-4); }
+  .note b { color: var(--accent); font-weight: 700; }
+
+  /* ---------- skill 類別 ---------- */
+  .cats { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: var(--s-3); }
+  .cat {
+    background: linear-gradient(180deg, var(--card-2), var(--card));
+    border: 1px solid var(--card-line); border-radius: var(--r-card);
+    padding: var(--s-5); position: relative; overflow: hidden;
+    box-shadow: inset 0 1px 0 0 var(--hairline);
+  }
+  .cat::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background: var(--app, var(--accent)); }
+  .cat .cat-top { display:flex; align-items:baseline; gap: var(--s-2); }
+  .cat .cat-name { font-size: 1.05rem; font-weight: 700; }
+  .cat .cat-count { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--app, var(--accent)); margin-left:auto; }
+  .cat .cat-count small { font-size: .7rem; color: var(--faint); font-weight: 500; }
+  .cat .cat-desc { color: var(--muted); font-size: .88rem; margin-top: var(--s-2); }
+
+  /* ---------- sync 機制 ---------- */
+  .layers { display: flex; flex-direction: column; gap: var(--s-2); }
+  .layer { display:flex; gap: var(--s-3); align-items:flex-start; background: var(--bg-soft); border:1px solid var(--card-line); border-radius: var(--r-btn); padding: var(--s-3) var(--s-4); }
+  .layer .l-tag { font-family: var(--font-mono); font-size: .7rem; color: var(--accent); border:1px solid var(--accent-soft); background: var(--accent-soft); border-radius: 6px; padding: 2px 8px; white-space: nowrap; margin-top: 3px; min-width: 84px; text-align:center; }
+  .layer .l-body strong { font-weight: 700; }
+  .layer .l-body p { color: var(--muted); font-size: .87rem; margin-top: 3px; }
+  .layer code, .note code { font-family: var(--font-mono); font-size: .85em; color: var(--text); background: rgba(217,164,65,.1); border: 1px solid var(--accent-soft); border-radius: 4px; padding: 1px 5px; }
+  .sync-flow { font-family: var(--font-mono); font-size: .8rem; color: var(--muted); background: var(--bg-soft); border:1px solid var(--card-line); border-radius: var(--r-btn); padding: var(--s-4); margin-top: var(--s-3); line-height: 1.9; text-align:center; }
+  .sync-flow b { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="eyebrow">AI-Crafted Apps</span>
+    <h1>我的 App 作品集</h1>
+    <p>我用 AI 打造的 iOS App — 與貓咪有關的療癒小宇宙</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="apps">
+
+    <!--
+      ============ 如何新增一個 App ============
+      1. 複製整段 <article class="card"> ... </article>
+      2. 改 ICON、名稱、標語、介紹
+      3. 在 .stores 裡「只留下這個 App 真的有上架的平台」按鈕，其餘整段刪掉
+      四種商店（App Store / Google Play / Microsoft / Mac）的按鈕範本，
+      放在本頁最後一張卡下方的註解區，需要哪個就複製哪個
+      ==========================================
+    -->
+
+    <!-- ===== NyanVeil（喵紗）— iOS only ===== -->
+    <!-- 想換這張卡的重點色，改 style 裡的 --app（影響 icon 底色、標語、邊條）；不寫就用全站預設銅金色 -->
+    <article class="card" style="--app:#d9a441;">
+      <div class="icon"><img src="nyanveil.png" alt="NyanVeil 圖示"></div>
+      <!-- 想換圖示就改上面 img 的 src（圖檔放同資料夾即可） -->
+      <div class="info">
+        <h2>NyanVeil（喵紗）</h2>
+        <div class="tagline">Cozy Cat Collection · 養貓收集遊戲</div>
+        <p class="desc">一款溫馨療癒的養貓收集遊戲。收集並照顧各式各樣的貓咪，在輕鬆的步調裡享受與貓相伴的時光。</p>
+        <div class="stores">
+          <!-- STORE: App Store -->
+          <a class="store" href="https://apps.apple.com/us/app/nyanveil/id6762141374" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c0 1.1-.4 2.1-1.2 2.9-.9.9-2 1.5-3.1 1.4-.1-1.1.4-2.2 1.1-2.9.8-.9 2.1-1.5 3.2-1.4zM20.6 17c-.4 1-.6 1.4-1.1 2.3-.8 1.2-1.8 2.6-3.1 2.6-1.2 0-1.5-.8-3.1-.8s-2 .7-3.1.8c-1.3 0-2.3-1.3-3.1-2.5-2.2-3.4-2.5-7.3-1.1-9.4 1-1.5 2.5-2.4 4-2.4 1.3 0 2.2.8 3.3.8 1 0 1.7-.8 3.3-.8 1.3 0 2.6.7 3.6 1.9-3.2 1.7-2.6 6.2.4 7.5z"/></svg>
+            <span class="s-name"><span class="s-sub">Download on the</span><span class="s-main">App Store</span></span>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- ===== 貓語研究所（MeowLinguistics）— iOS only ===== -->
+    <article class="card" style="--app:#5fb0a6;">
+      <div class="icon"><img src="meowlinguistics.png" alt="貓語研究所 圖示"></div>
+      <!-- 想換圖示就改上面 img 的 src（圖檔放同資料夾即可） -->
+      <div class="info">
+        <h2>貓語研究所（MeowLinguistics）</h2>
+        <div class="tagline">Cat Language Lab · 解讀貓咪叫聲</div>
+        <p class="desc">用學術出處詮釋你家主子的叫聲。結合研究資料，幫你解讀貓咪每一聲「喵」背後的含義。</p>
+        <div class="stores">
+          <!-- STORE: App Store -->
+          <a class="store" href="https://apps.apple.com/tw/app/id6768026132" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c0 1.1-.4 2.1-1.2 2.9-.9.9-2 1.5-3.1 1.4-.1-1.1.4-2.2 1.1-2.9.8-.9 2.1-1.5 3.2-1.4zM20.6 17c-.4 1-.6 1.4-1.1 2.3-.8 1.2-1.8 2.6-3.1 2.6-1.2 0-1.5-.8-3.1-.8s-2 .7-3.1.8c-1.3 0-2.3-1.3-3.1-2.5-2.2-3.4-2.5-7.3-1.1-9.4 1-1.5 2.5-2.4 4-2.4 1.3 0 2.2.8 3.3.8 1 0 1.7-.8 3.3-.8 1.3 0 2.6.7 3.6 1.9-3.2 1.7-2.6 6.2.4 7.5z"/></svg>
+            <span class="s-name"><span class="s-sub">Download on the</span><span class="s-main">App Store</span></span>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!--
+      ============ 之後要新增 App / 平台時的按鈕範本（複製需要的貼進 .stores） ============
+      App Store：
+        <a class="store" href="App的網址" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c0 1.1-.4 2.1-1.2 2.9-.9.9-2 1.5-3.1 1.4-.1-1.1.4-2.2 1.1-2.9.8-.9 2.1-1.5 3.2-1.4zM20.6 17c-.4 1-.6 1.4-1.1 2.3-.8 1.2-1.8 2.6-3.1 2.6-1.2 0-1.5-.8-3.1-.8s-2 .7-3.1.8c-1.3 0-2.3-1.3-3.1-2.5-2.2-3.4-2.5-7.3-1.1-9.4 1-1.5 2.5-2.4 4-2.4 1.3 0 2.2.8 3.3.8 1 0 1.7-.8 3.3-.8 1.3 0 2.6.7 3.6 1.9-3.2 1.7-2.6 6.2.4 7.5z"/></svg>
+          <span class="s-name"><span class="s-sub">Download on the</span><span class="s-main">App Store</span></span>
+        </a>
+      Google Play：
+        <a class="store" href="App的網址" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 1.8 13 11.2l-9.4 9.4c-.3-.2-.5-.6-.5-1V2.8c0-.4.2-.8.5-1zM14.2 12.4l2.9 2.9-9.6 5.5 6.7-8.4zm4.4-1.9 2.5 1.4c.7.4.7 1.4 0 1.8l-2.6 1.5-3-3 3.1-1.7zM7.5 2.4l9.6 5.5-2.9 2.9-6.7-8.4z"/></svg>
+          <span class="s-name"><span class="s-sub">GET IT ON</span><span class="s-main">Google Play</span></span>
+        </a>
+      Microsoft Store：
+        <a class="store" href="App的網址" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h8.5v8.5H3V3zm9.5 0H21v8.5h-8.5V3zM3 12.5h8.5V21H3v-8.5zm9.5 0H21V21h-8.5v-8.5z"/></svg>
+          <span class="s-name"><span class="s-sub">取得於</span><span class="s-main">Microsoft Store</span></span>
+        </a>
+      Mac App Store：
+        <a class="store" href="App的網址" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c0 1.1-.4 2.1-1.2 2.9-.9.9-2 1.5-3.1 1.4-.1-1.1.4-2.2 1.1-2.9.8-.9 2.1-1.5 3.2-1.4zM20.6 17c-.4 1-.6 1.4-1.1 2.3-.8 1.2-1.8 2.6-3.1 2.6-1.2 0-1.5-.8-3.1-.8s-2 .7-3.1.8c-1.3 0-2.3-1.3-3.1-2.5-2.2-3.4-2.5-7.3-1.1-9.4 1-1.5 2.5-2.4 4-2.4 1.3 0 2.2.8 3.3.8 1 0 1.7-.8 3.3-.8 1.3 0 2.6.7 3.6 1.9-3.2 1.7-2.6 6.2.4 7.5z"/></svg>
+          <span class="s-name"><span class="s-sub">Download on the</span><span class="s-main">Mac App Store</span></span>
+        </a>
+      ============================================================================
+    -->
+    <!-- 範本說明區結束 — 不會顯示在頁面上 -->
+
+  </div>
+
+  <!-- ===== AI 自動化測試 ===== -->
+  <section class="section">
+    <div class="section-head">
+      <div class="kicker">AI Automation Testing</div>
+      <h2>AI 自動化測試</h2>
+      <p>用 AI 打造的前後端自動化測試框架：前端以 Playwright + pytest-BDD 跑端對端（E2E）情境，後端用 pytest 做單元與協定驗證。以下為近期實際執行的彙總數據。</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">92</div><div class="lbl">測試情境（前後端）</div></div>
+      <div class="stat"><div class="num">25</div><div class="lbl">測試套件檔（15 前端 + 10 後端）</div></div>
+      <div class="stat"><div class="num">325+</div><div class="lbl">斷言數</div></div>
+      <div class="stat"><div class="num">13</div><div class="lbl">測試分類</div></div>
+    </div>
+    <div class="tags">
+      <span class="tag">安全</span><span class="tag">可及性</span><span class="tag">效能</span>
+      <span class="tag">功能</span><span class="tag">導覽</span><span class="tag">RWD 響應式</span>
+      <span class="tag">SEO</span><span class="tag">錯誤處理</span><span class="tag">影像 / UI</span>
+      <span class="tag">頁面載入</span><span class="tag">互動</span><span class="tag">跨瀏覽器</span>
+    </div>
+    <p class="note">自動化測試框架在 AI 輔助下開發，把原本需要數週的建置工作縮短到約 <b>1 天</b>。</p>
+  </section>
+
+  <!-- ===== 我的 Claude Skills ===== -->
+  <section class="section">
+    <div class="section-head">
+      <div class="kicker">Claude Skills · 77</div>
+      <h2>我的 Claude Skills</h2>
+      <p>我為 Claude Code 打造的 77 個 skill，每個都是一段可重複使用的自動化能力，依專案類型分類、自動部署到對應專案。</p>
+    </div>
+    <div class="cats">
+      <div class="cat" style="--app:#d9a441;">
+        <div class="cat-top"><span class="cat-name">App 開發</span><span class="cat-count">36</span></div>
+        <p class="cat-desc">手機／遊戲 App 開發全流程：素材生成、自動化測試、上架（iOS / Android）、產品 forge → build → review → deploy 生命週期。最大類。</p>
+      </div>
+      <div class="cat" style="--app:#c77b58;">
+        <div class="cat-top"><span class="cat-name">Hacker / 紅隊</span><span class="cat-count">14</span></div>
+        <p class="cat-desc">滲透測試與紅隊：AD 網域、C2、雲端與容器、行動 App、OSINT、提權、逆向、CTF。皆需明確授權使用。</p>
+      </div>
+      <div class="cat" style="--app:#5fb0a6;">
+        <div class="cat-top"><span class="cat-name">QA / 測試</span><span class="cat-count">8</span></div>
+        <p class="cat-desc">品質保證與測試自動化：差異回歸測試、測試案例鏈、負載測試、雲端瀏覽器測試、bug 分級與分流。</p>
+      </div>
+      <div class="cat" style="--app:#6f93c9;">
+        <div class="cat-top"><span class="cat-name">Universal 共用</span><span class="cat-count">8</span></div>
+        <p class="cat-desc">跨所有專案共用的基礎建設：外部 CLI 橋接、多 agent code review、計畫交接、需求訪談、skill 製作工具。</p>
+      </div>
+      <div class="cat" style="--app:#8f9b55;">
+        <div class="cat-top"><span class="cat-name">Security 安全</span><span class="cat-count">6</span></div>
+        <p class="cat-desc">安全掃描與稽核：API 安全測試、PR 機密掃描、持續性安全監控、OWASP ZAP、供應鏈稽核。</p>
+      </div>
+      <div class="cat" style="--app:#a07bb5;">
+        <div class="cat-top"><span class="cat-name">Product 產品設計</span><span class="cat-count">5</span></div>
+        <p class="cat-desc">設計與原型：Figma 設計 token 擷取、Mermaid → FigJam、Pencil 同步、design-to-code（React + Tailwind）。</p>
+      </div>
+    </div>
+    <p class="note">共 <b>77</b> 個 skill，其中 <b>6</b> 個為 app + qa 跨類別共用。分類依各 skill 自身的 <b>projects</b> 標記，部署時依專案類型自動篩選。</p>
+  </section>
+
+  <!-- ===== 雙系統 Sync 機制 ===== -->
+  <section class="section">
+    <div class="section-head">
+      <div class="kicker">Dual-System Sync · Windows ⇄ macOS</div>
+      <h2>雙系統 Sync 機制</h2>
+      <p>我在 Windows（微軟）與 macOS（蘋果）兩台機器上開發，靠一套「單一來源（single source of truth）」的同步機制，讓兩邊的 Claude 設定、行為與能力保持一致、不漂移。</p>
+    </div>
+    <div class="layers">
+      <div class="layer">
+        <span class="l-tag">全域設定</span>
+        <div class="l-body"><strong>使用者層級行為規則</strong><p>放在 <code>~/.claude</code> 的全域設定，定義跨所有專案的行為契約（誠實準則、回覆語言、commit／push 流程等），兩台機器共用同一份。</p></div>
+      </div>
+      <div class="layer">
+        <span class="l-tag">專案設定</span>
+        <div class="l-body"><strong>每個專案的類型標記</strong><p>各專案的 <code>project.env</code> 標明 PROJECT_TYPE（app / qa / security / hacker / product），決定該專案要部署哪些 skill。</p></div>
+      </div>
+      <div class="layer">
+        <span class="l-tag">Hook</span>
+        <div class="l-body"><strong>自動執行的攔截器</strong><p>pre／post 指令 hook 以 hardlink 部署，原始檔一改即時生效；負責安全防護（如危險刪除攔截）與流程強制。</p></div>
+      </div>
+      <div class="layer">
+        <span class="l-tag">Skill</span>
+        <div class="l-body"><strong>可重複使用的能力</strong><p>77 個 skill 以 symlink 依專案類型部署；改原始檔即同步到所有專案，只有新增／改名／刪除才需重跑同步。</p></div>
+      </div>
+      <div class="layer">
+        <span class="l-tag">規範</span>
+        <div class="l-body"><strong>跨機器一致的準則</strong><p>同步腳本在部署時稽核 PROJECT_TYPE、skill 數量與版本，確保兩台機器拉到同一版本、行為一致。</p></div>
+      </div>
+    </div>
+    <div class="sync-flow">單一來源 repo　→　<b>sync 腳本</b>　→　依 PROJECT_TYPE 篩選　→　同步到 <b>Windows</b> ＋ <b>macOS</b> 兩台</div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 · 以 AI 打造的 iOS App</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+# 自動化工具只留本機，不進公開 repo（含本機路徑/專案代號）
+.showcase/
+index.html.tmp
+*.pyc

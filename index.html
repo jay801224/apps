@@ -229,6 +229,66 @@
   .layer code, .note code { font-family: var(--font-mono); font-size: .85em; color: var(--text); background: rgba(217,164,65,.1); border: 1px solid var(--accent-soft); border-radius: 4px; padding: 1px 5px; }
   .sync-flow { font-family: var(--font-mono); font-size: .8rem; color: var(--muted); background: var(--bg-soft); border:1px solid var(--card-line); border-radius: var(--r-btn); padding: var(--s-4); margin-top: var(--s-3); line-height: 1.9; text-align:center; }
   .sync-flow b { color: var(--accent); }
+
+  /* ---------- 即將上架（不可點的商店鈕） ---------- */
+  .store-soon { cursor: default; opacity: .72; }
+  .store-soon:hover { border-color: var(--card-line); background: var(--bg-soft); }
+  .store-soon::after { display: none; }
+
+  /* ---------- 截圖縮圖列（可左右滑動 → 點擊放大） ---------- */
+  .shots {
+    display: flex; gap: var(--s-3); overflow-x: auto; padding-bottom: var(--s-3);
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  }
+  .shots .shot {
+    width: 260px; height: 180px; flex: 0 0 auto; object-fit: cover; object-position: center;
+    border-radius: var(--r-btn); border: 1px solid var(--card-line); cursor: zoom-in; scroll-snap-align: start;
+    box-shadow: inset 0 1px 0 0 var(--hairline), 0 8px 20px -12px rgba(0,0,0,.7);
+    transition: transform .3s var(--ease-spring), border-color .3s var(--ease-spring);
+  }
+  .shots .shot:hover { transform: translateY(-3px); border-color: var(--line-hot); }
+  .shots::-webkit-scrollbar { height: 8px; }
+  .shots::-webkit-scrollbar-thumb { background: var(--card-line); border-radius: 999px; }
+  .shots::-webkit-scrollbar-track { background: transparent; }
+
+  /* ---------- 燈箱（點縮圖放大） ---------- */
+  .lightbox {
+    position: fixed; inset: 0; background: rgba(6,8,7,.92);
+    display: none; align-items: center; justify-content: center;
+    padding: var(--s-5); z-index: 50; cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%; max-height: 92vh; border-radius: var(--r-btn);
+    border: 1px solid var(--card-line); box-shadow: 0 30px 80px -20px rgba(0,0,0,.8);
+  }
+
+  /* ---------- bot 清單 ---------- */
+  .botlist { margin: 0 0 var(--s-5); padding-left: 1.3em; color: var(--text); }
+  .botlist li { margin: var(--s-1) 0; }
+  .botlist li::marker { color: var(--accent); font-family: var(--font-mono); font-weight: 700; }
+
+  /* ---------- 輪播（左右切換 + 小點點） ---------- */
+  .carousel { position: relative; max-width: 380px; margin: 0 auto; }
+  .car-view { overflow: hidden; border-radius: var(--r-card); border: 1px solid var(--card-line); box-shadow: inset 0 1px 0 0 var(--hairline), 0 8px 20px -12px rgba(0,0,0,.7); }
+  .car-track { display: flex; transition: transform .42s var(--ease-spring); }
+  .car-slide { flex: 0 0 100%; }
+  .car-slide img { width: 100%; display: block; }
+  .car-prev, .car-next {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--card-line);
+    background: rgba(12,15,14,.78); color: var(--text); font-size: 20px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s var(--ease-spring), border-color .2s var(--ease-spring);
+  }
+  .car-prev:hover, .car-next:hover { background: var(--btn-hot); border-color: var(--line-hot); }
+  .car-prev { left: 8px; } .car-next { right: 8px; }
+  .car-dots { display: flex; justify-content: center; gap: var(--s-2); margin-top: var(--s-4); }
+  .car-dots button {
+    width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0;
+    background: var(--card-line); cursor: pointer; transition: background .2s, transform .2s;
+  }
+  .car-dots button.on { background: var(--accent); transform: scale(1.3); }
 </style>
 </head>
 <body>
@@ -314,6 +374,37 @@
       </div>
     </article>
 
+    <!-- ===== Spirit Beast Ascending（靈妖也修仙）— iOS ===== -->
+    <article class="card" style="--app:#7e6bd0;">
+      <div class="icon"><img src="spirit-beast.png" alt="Spirit Beast Ascending 圖示"></div>
+      <div class="info">
+        <h2>Spirit Beast Ascending（靈妖也修仙）</h2>
+        <div class="tagline">Cat Idle Cultivation · 仙俠貓咪放置養成</div>
+        <p class="desc">仙俠修仙風的貓咪放置養成手遊。操控一隻貓不斷突破「境界」、一路修煉成仙，三語（繁中／英／日）支援。</p>
+        <div class="stores">
+          <!-- STORE: App Store -->
+          <a class="store" href="https://apps.apple.com/us/app/spirit-beast-ascending/id6762217489" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c0 1.1-.4 2.1-1.2 2.9-.9.9-2 1.5-3.1 1.4-.1-1.1.4-2.2 1.1-2.9.8-.9 2.1-1.5 3.2-1.4zM20.6 17c-.4 1-.6 1.4-1.1 2.3-.8 1.2-1.8 2.6-3.1 2.6-1.2 0-1.5-.8-3.1-.8s-2 .7-3.1.8c-1.3 0-2.3-1.3-3.1-2.5-2.2-3.4-2.5-7.3-1.1-9.4 1-1.5 2.5-2.4 4-2.4 1.3 0 2.2.8 3.3.8 1 0 1.7-.8 3.3-.8 1.3 0 2.6.7 3.6 1.9-3.2 1.7-2.6 6.2.4 7.5z"/></svg>
+            <span class="s-name"><span class="s-sub">Download on the</span><span class="s-main">App Store</span></span>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- showcase:auto:start id=meowmorph -->
+    <article class="card" data-app="meowmorph" style="--app:#e0894d;">
+      <div class="icon">喵</div>
+      <div class="info">
+        <h2>MeowMorph</h2>
+        <div class="tagline">Forced Cat Conversion · 任何照片都變貓</div>
+        <p class="desc">把任何照片裡的主角強制變成一隻可愛的貓，提供油畫／賽博龐克／像素三種風格。AI 驅動的病毒式單一功能 App。</p>
+        <div class="stores">
+          <span class="store store-soon" aria-disabled="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 1.6c0 1.1-.4 2.1-1.2 2.9-.9.9-2 1.5-3.1 1.4-.1-1.1.4-2.2 1.1-2.9.8-.9 2.1-1.5 3.2-1.4zM20.6 17c-.4 1-.6 1.4-1.1 2.3-.8 1.2-1.8 2.6-3.1 2.6-1.2 0-1.5-.8-3.1-.8s-2 .7-3.1.8c-1.3 0-2.3-1.3-3.1-2.5-2.2-3.4-2.5-7.3-1.1-9.4 1-1.5 2.5-2.4 4-2.4 1.3 0 2.2.8 3.3.8 1 0 1.7-.8 3.3-.8 1.3 0 2.6.7 3.6 1.9-3.2 1.7-2.6 6.2.4 7.5z"/></svg><span class="s-name"><span class="s-sub">iOS</span><span class="s-main">即將上架</span></span></span>
+        </div>
+      </div>
+    </article>
+    <!-- showcase:auto:end id=meowmorph -->
+
     <!--
       ============ 之後要新增 App / 平台時的按鈕範本（複製需要的貼進 .stores） ============
       App Store：
@@ -372,6 +463,7 @@
       <span class="tag">頁面載入</span><span class="tag">互動</span><span class="tag">跨瀏覽器</span>
     </div>
     <p class="note">自動化測試框架在 AI 輔助下開發，把原本需要數週的建置工作縮短到約 <b>1 天</b>。</p>
+    <p class="note">測試與部署再接上 <b>GitHub Actions CI</b>：每次 push 自動跑測試並部署到 GitHub Pages；合併前另有 AI 輔助的 <b>Code Review</b> 把關品質。</p>
   </section>
 
   <!-- ===== 我的 Claude Skills ===== -->
@@ -442,6 +534,45 @@
     <div class="sync-flow">單一來源 repo　→　<b>sync 腳本</b>　→　依 PROJECT_TYPE 篩選　→　同步到 <b>Windows</b> ＋ <b>macOS</b> 兩台</div>
   </section>
 
+  <!-- ===== AI Monitor 工具 ===== -->
+  <section class="section">
+    <div class="section-head">
+      <div class="kicker">AI Monitor · Local Dashboard</div>
+      <h2>AI Monitor 工具</h2>
+      <p>本機、唯讀、零 token 的監控面板，盯著我同時跑的多個 AI coding session（狀態 / context / hook），並在 session 卡住或閒置時靜默通知。下方截圖已去識別化。</p>
+    </div>
+    <div class="shots" id="aimon-strip">
+      <img class="shot" src="aimonitor-panel.png" alt="AI Monitor 文字監控面板" loading="lazy">
+      <img class="shot" src="aimonitor-office.png" alt="AI Monitor 辦公室樣式" loading="lazy">
+    </div>
+    <p class="note">這是 AI Monitor 工具</p>
+  </section>
+
+  <!-- ===== Telegram Bot 種類 ===== -->
+  <section class="section">
+    <div class="section-head">
+      <div class="kicker">Telegram Bots</div>
+      <h2>Telegram 的 Bot 有哪幾種種類</h2>
+      <p>我用 Python（python-telegram-bot）打造的幾種 Telegram 機器人：</p>
+    </div>
+    <ol class="botlist">
+      <li>打卡機器人</li>
+      <li>Telegram 自動化測試機器人</li>
+      <li>AI Monitor 通知機器人</li>
+    </ol>
+    <div class="carousel" id="tg-carousel">
+      <div class="car-view">
+        <div class="car-track">
+          <div class="car-slide"><img src="tg-autotest.png" alt="Telegram 自動化測試機器人" loading="lazy"></div>
+          <div class="car-slide"><img src="tg-aimonitor.png" alt="AI Monitor 通知機器人" loading="lazy"></div>
+        </div>
+      </div>
+      <button class="car-prev" type="button" aria-label="上一張">‹</button>
+      <button class="car-next" type="button" aria-label="下一張">›</button>
+      <div class="car-dots"></div>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -449,6 +580,50 @@
     <p>© 2026 · 以 AI 打造的 App 與遊戲</p>
   </div>
 </footer>
+
+<script>
+  // ── 燈箱：點縮圖放大；點背景或按 Esc 關閉 ──
+  (function () {
+    const lb = document.createElement('div');
+    lb.className = 'lightbox';
+    lb.innerHTML = '<img alt="放大檢視">';
+    document.body.appendChild(lb);
+    const lbImg = lb.querySelector('img');
+    document.querySelectorAll('.shot').forEach(function (img) {
+      img.addEventListener('click', function () {
+        lbImg.src = img.src; lbImg.alt = img.alt; lb.classList.add('open');
+      });
+    });
+    lb.addEventListener('click', function () { lb.classList.remove('open'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('open'); });
+  })();
+
+  // ── 輪播：左右切換 + 小點點（幾張圖就有幾個點） ──
+  (function () {
+    const car = document.getElementById('tg-carousel');
+    if (!car) return;
+    const track = car.querySelector('.car-track');
+    const slides = car.querySelectorAll('.car-slide');
+    const dotsWrap = car.querySelector('.car-dots');
+    let i = 0;
+    slides.forEach(function (_, idx) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', '第 ' + (idx + 1) + ' 張');
+      b.addEventListener('click', function () { go(idx); });
+      dotsWrap.appendChild(b);
+    });
+    const dots = dotsWrap.querySelectorAll('button');
+    function go(n) {
+      i = (n + slides.length) % slides.length;
+      track.style.transform = 'translateX(' + (-i * 100) + '%)';
+      dots.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+    }
+    car.querySelector('.car-prev').addEventListener('click', function () { go(i - 1); });
+    car.querySelector('.car-next').addEventListener('click', function () { go(i + 1); });
+    go(0);
+  })();
+</script>
 
 </body>
 </html>

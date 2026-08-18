@@ -15,7 +15,7 @@
 | **Spirit Beast Ascending（靈妖也修仙）** | iOS App | App Store | 仙俠修仙風的貓咪放置養成手遊，三語（繁中／英／日）支援。 |
 | **Purrsperia** | iOS App | App Store | 溫馨可愛路線的 2.5D 貓法師生存動作遊戲（survivors-like），完全離線單機。 |
 | **MeowMorph** | iOS App | App Store | 把任何照片裡的主角變成一隻可愛的貓，油畫／賽博龐克／像素三種風格。 |
-| **Duolog** | 桌面 App | Microsoft Store / Mac App Store | 隱私優先的即時雙向會議翻譯 + 會議筆記，本機 Whisper 語音辨識。 |
+| **Duolog** | 桌面 + iOS App | Microsoft Store / Mac App Store / App Store（iOS） | 隱私優先的即時雙向會議翻譯 + 會議筆記，本機 Whisper 語音辨識。 |
 
 ### 📊 其他展示區塊
 - **AI 自動化測試** — 前後端自動化測試框架的彙總數據（92 測試情境、25 套件檔、325+ 斷言、13 分類）。
